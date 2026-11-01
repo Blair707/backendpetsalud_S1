@@ -1,0 +1,61 @@
+package com.petsalud.backendpetsalud.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Entity
+@Table(name = "usuarios")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    // Solo escritura: nunca se serializa el hash hacia el cliente
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
+    private String password;
+
+    private String nombre;
+
+    private String apellido;
+
+    private String telefono;
+
+    private String direccion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol;
+
+    // Relaciones
+    @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Mascota> mascotas;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Venta> ventas;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Recompensa> recompensas;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Notificacion> notificaciones;
+}
